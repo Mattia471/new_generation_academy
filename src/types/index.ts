@@ -13,9 +13,9 @@ export interface DaySchedule {
 
 export interface FormData {
     name: string;
+    surname: string;
     email: string;
     phone: string;
-    course: string;
     day: string;
     message: string;
 }

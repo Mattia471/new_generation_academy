@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Calendar, Clock, Heart, Instagram, Mail, MapPin, Phone, Users} from 'lucide-react';
+import {Calendar, CheckCircle, Clock, Heart, Instagram, Mail, MapPin, Phone, Users} from 'lucide-react';
 import {DaySchedule, FormData, NavButtonProps, SectionType} from './types';
 
 const App: React.FC = () => {
@@ -7,12 +7,14 @@ const App: React.FC = () => {
     const [showBookingForm, setShowBookingForm] = useState<boolean>(false);
     const [formData, setFormData] = useState<FormData>({
         name: '',
+        surname: '',
         email: '',
         phone: '',
-        course: '',
         day: '',
         message: ''
     });
+    const [formSent, setFormSent] = useState<boolean>(false);
+    const [loadingSending, setLoadingSending] = useState<boolean>(false);
 
     const courses: DaySchedule[] = [
         {
@@ -53,18 +55,73 @@ const App: React.FC = () => {
         }));
     };
 
-    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    const sendBookingEmail = async (formData: {
+        name: string;
+        surname: string;
+        email: string;
+        phone: string;
+        day: string;
+        message?: string;
+    }): Promise<void> => {
+        try {
+            const serviceID = 'service_6lwhe1n';   // Dal dashboard EmailJS
+            const templateID = 'template_bmwlowp'; // Dal dashboard EmailJS
+            const publicKey = 'yICjmAQWVh4F8z63n'; // Dal dashboard EmailJS
+
+            // Parametri che verranno sostituiti nei {{ }} del template EmailJS
+            const emailParams = {
+                name: formData.name,
+                surname: formData.surname,
+                email: formData.email,
+                phone: formData.phone,
+                day: formData.day,
+                message: formData.message || 'Nessuna nota aggiuntiva',
+                time: new Date().toLocaleString('it-IT', {
+                    dateStyle: 'short',
+                    timeStyle: 'short'
+                })
+            };
+
+            // Invio email con EmailJS
+            const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    service_id: serviceID,
+                    template_id: templateID,
+                    user_id: publicKey,
+                    template_params: emailParams
+                })
+            });
+
+            if (response.ok) {
+                console.log('✅ Email inviata con successo');
+            } else {
+                console.error('❌ Errore invio email:', response.statusText);
+            }
+
+        } catch (error) {
+            console.error('❌ Errore EmailJS:', error);
+        }
+    };
+
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
         e.preventDefault();
 
         // Validazione base
-        if (!formData.name || !formData.email || !formData.course || !formData.day) {
+        if (!formData.name || !formData.email || !formData.day || !formData.phone || !formData.surname) {
             alert('Per favore compila tutti i campi obbligatori.');
             return;
         }
-
-        alert('Grazie! Ti contatteremo presto per confermare la tua prova gratuita!');
+        setLoadingSending(true);
+        await sendBookingEmail(formData);
+        setLoadingSending(false);
         setShowBookingForm(false);
-        setFormData({ name: '', email: '', phone: '', course: '', day: '', message: '' });
+        setFormData({name: '', surname: '', email: '', phone: '', day: '', message: ''});
+        setFormSent(true);
+        setTimeout(() => setFormSent(false), 3000);
     };
 
     const handleContactSubmit = (): void => {
@@ -89,7 +146,7 @@ const App: React.FC = () => {
             {
                 icon: "🎵",
                 title: "Tutti i Livelli",
-                subtitle: "Principianti e avanzati",
+                subtitle: "Dalle basi alla performance",
                 gradient: "from-purple-500 to-purple-600"
             },
             {
@@ -100,7 +157,7 @@ const App: React.FC = () => {
             },
             {
                 icon: "🕺",
-                title: "Maestri Pro",
+                title: "Maestri Certificati",
                 subtitle: "Esperienza internazionale",
                 gradient: "from-purple-600 to-pink-500"
             },
@@ -269,12 +326,10 @@ const App: React.FC = () => {
                                         <h3 className="text-2xl font-bold text-white">La Nostra Sede</h3>
                                     </div>
                                     <p className="text-purple-200 mb-6">
-                                        Situata nel complesso scolastico Gauss, la nostra accademia offre uno spazio
-                                        moderno e
-                                        accogliente,
-                                        dotato di ampie sale da ballo, specchi professionali e sistema audio di alta
-                                        qualità.
-                                        Un ambiente perfetto per imparare e divertirsi!
+                                        La nostra sala si trova all’interno del complesso scolastico Gauss.
+                                        L’Accademia mette a disposizione uno spazio moderno e accogliente,
+                                        con un’ampia sala da ballo, specchi professionali e un sistema audio di alta qualità.
+                                        È presente anche un parcheggio gratuito all’interno del complesso. Un ambiente ideale per imparare, allenarsi e divertirsi!
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <a
@@ -301,15 +356,14 @@ const App: React.FC = () => {
                                     className="bg-gradient-to-br from-pink-600/20 to-pink-800/20 backdrop-blur-sm rounded-2xl p-8 border border-pink-500/30">
                                     <div className="flex items-center space-x-3 mb-6">
                                         <Heart className="text-pink-400" size={32}/>
-                                        <h3 className="text-2xl font-bold text-white">Roberto & Beatrice</h3>
+                                        <div className={"flex flex-col"}>
+                                            <h3 className="text-2xl font-bold text-white">Roberto & Beatrice</h3>
+                                            <small className={"text-white"}> dove la danza caraibica diventa amicizia, crescita e divertimento ✨</small>
+                                        </div>
                                     </div>
                                     <p className="text-pink-200 mb-6">
-                                        Due maestri appassionati con anni di esperienza internazionale nella danza
-                                        latina.
-                                        Roberto specializzato in Salsa Cubana e Bachata Sensual, Beatrice esperta in
-                                        Lady Style
-                                        e tecniche femminili. Insieme creano un team perfetto per guidarti nel mondo
-                                        della danza.
+                                        Due maestri appassionati con anni di esperienza internazionale nel mondo della danza caraibica.
+                                        Oltre alla tecnica e alla didattica, offrono un rapporto umano fatto di amicizia, energia e supporto anche nella vita quotidiana.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <button
@@ -335,14 +389,17 @@ const App: React.FC = () => {
 
                 {/* Corsi Section */}
                 {activeSection === 'corsi' && (
-                    <section className="h-full py-8">
+                    <section className="h-full pb-8 pt-14">
                         <div className="max-w-7xl mx-auto px-4">
-                            <div className="text-center">
-                                <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
+                            <div className="text-center space-y-2 mb-4">
+                                <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                                     I Nostri Corsi
                                 </h2>
-                                <p className="text-xl text-purple-200 mb-8">
-                                    Anno Accademico 2025/2026 - Settimana di prova gratuita dal 22 settembre
+                                <p className="lg:text-xl text-sm text-purple-200 font-bold ">
+                                    Anno Accademico 2025/2026
+                                </p>
+                                <p className="text-purple-300 max-w-3xl mx-auto underline">
+                                    Settimana di prova gratuita dal 22 settembre
                                 </p>
                             </div>
 
@@ -360,7 +417,7 @@ const App: React.FC = () => {
                                                     <div className="flex items-center space-x-4">
                                                         <Clock className="text-purple-400" size={20}/>
                                                         <div>
-                                                            <h4 className="text-white font-semibold">{classInfo.name}</h4>
+                                                            <h4 className="text-white font-semibold lg:text-lg text-sm">{classInfo.name}</h4>
                                                             <p className="text-purple-300 text-sm">{classInfo.level}</p>
                                                         </div>
                                                     </div>
@@ -393,7 +450,7 @@ const App: React.FC = () => {
 
                 {/* Maestri Section */}
                 {activeSection === 'maestri' && (
-                    <section className="h-full py-8">
+                    <section className="h-full pb-8 pt-14">
                         <div className="max-w-7xl mx-auto px-4">
                             <div className="text-center mb-8">
                                 <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
@@ -415,16 +472,13 @@ const App: React.FC = () => {
                                     </div>
                                     <h3 className="text-3xl font-bold text-white mb-4">Roberto</h3>
                                     <div className="text-purple-200 space-y-4">
-                                        <p>Maestro di Salsa e Bachata con oltre 8 anni di esperienza nel mondo della
-                                            danza latina.</p>
-                                        <p>Specializzato in stile Cubano e Bachata Sensual, Roberto porta energia e
-                                            passione in ogni lezione.</p>
-                                        <p>La sua filosofia: "La danza non è solo movimento, è espressione
-                                            dell'anima"</p>
+                                        <p>Ha studiato diverse discipline, specializzandosi in Salsa Los Angeles, New York Style e Bachata Sensual, unendo precisione e musicalità.</p>
                                     </div>
                                     <div className="mt-6 flex justify-center space-x-4">
                                         <span
-                                            className="bg-purple-600/30 px-4 py-2 rounded-full text-purple-200 text-sm">Salsa Cubana</span>
+                                            className="bg-purple-600/30 px-4 py-2 rounded-full text-purple-200 text-sm">Salsa Los Angeles</span>
+                                        <span
+                                            className="bg-purple-600/30 px-4 py-2 rounded-full text-purple-200 text-sm">New York Style</span>
                                         <span
                                             className="bg-purple-600/30 px-4 py-2 rounded-full text-purple-200 text-sm">Bachata Sensual</span>
                                     </div>
@@ -440,15 +494,12 @@ const App: React.FC = () => {
                                     </div>
                                     <h3 className="text-3xl font-bold text-white mb-4">Beatrice</h3>
                                     <div className="text-pink-200 space-y-4">
-                                        <p>Maestra specializzata in Lady Style e tecniche femminili, con una particolare
-                                            attenzione alla grazia e all'eleganza.</p>
-                                        <p>Formatrice certificata in Bachata Sensual e Dominican, aiuta ogni allieva a
-                                            trovare la propria femminilità nella danza.</p>
-                                        <p>Il suo motto: "Ogni donna ha una regina che aspetta solo di ballare"</p>
+                                        <p>Specializzata in Salsa Cubana, Bachata Sensual e Lady Style, è un punto di riferimento per la tecnica femminile e per il raffinato stile della Bachata Sensual Lady Style.</p>
                                     </div>
                                     <div className="mt-6 flex justify-center space-x-4">
                                         <span className="bg-pink-600/30 px-4 py-2 rounded-full text-pink-200 text-sm">Lady Style</span>
-                                        <span className="bg-pink-600/30 px-4 py-2 rounded-full text-pink-200 text-sm">Bachata Dominican</span>
+                                        <span className="bg-pink-600/30 px-4 py-2 rounded-full text-pink-200 text-sm">Bachata Sensual</span>
+                                        <span className="bg-pink-600/30 px-4 py-2 rounded-full text-pink-200 text-sm">Salsa Cubana</span>
                                     </div>
                                 </div>
                             </div>
@@ -458,12 +509,7 @@ const App: React.FC = () => {
                                     className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30">
                                     <h3 className="text-2xl font-bold text-white mb-4">Il nostro approccio</h3>
                                     <p className="text-purple-200 mb-6 max-w-4xl mx-auto">
-                                        Roberto e Beatrice credono che la danza sia per tutti. Con pazienza,
-                                        professionalità e tanto divertimento,
-                                        ti guideranno passo dopo passo nel meraviglioso mondo della Salsa e della
-                                        Bachata.
-                                        Che tu sia un principiante assoluto o un ballerino esperto, troverai il corso
-                                        perfetto per te!
+                                        Insieme formiamo un team perfetto per guidarti nel mondo del ballo e del divertimento di gruppo, trasformando ogni lezione in un’esperienza unica
                                     </p>
                                 </div>
                             </div>
@@ -473,7 +519,7 @@ const App: React.FC = () => {
 
                 {/* Contatti Section */}
                 {activeSection === 'contatti' && (
-                    <section className="h-full py-8">
+                    <section className="h-full pb-8 pt-14">
                         <div className="max-w-7xl mx-auto px-4">
                             <div className="text-center mb-8">
                                 <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
@@ -502,9 +548,10 @@ const App: React.FC = () => {
 
                                             <div className="flex items-center space-x-4">
                                                 <Phone className="text-pink-400" size={24}/>
-                                                <div>
+                                                <div className={"flex flex-col"}>
                                                     <h4 className="text-white font-semibold">Telefono</h4>
                                                     <p className="text-pink-200">+39 380 68 68 333</p>
+                                                    <p className={"text-pink-200"}>+39 324 88 39 137</p>
                                                 </div>
                                             </div>
 
@@ -512,16 +559,18 @@ const App: React.FC = () => {
                                                 <Mail className="text-purple-400" size={24}/>
                                                 <div>
                                                     <h4 className="text-white font-semibold">Email</h4>
-                                                    <p className="text-purple-200">info@newgenerationacademy.it</p>
+                                                    <p className="text-purple-200">n.g.ademy24@gmail.com</p>
                                                 </div>
                                             </div>
 
                                             <div className="flex items-center space-x-4">
                                                 <Instagram className="text-pink-400" size={24}/>
-                                                <div>
+                                                <div className={"flex flex-col"}>
                                                     <h4 className="text-white font-semibold">Instagram</h4>
-                                                    <p className="text-pink-200">@newgenerationacademy</p>
-                                                    <p className="text-pink-200">@roberto&beatrice</p>
+                                                    <a href="https://www.instagram.com/newgeneration_academy_/" target="_blank"
+                                                       className="text-pink-200 hover:underline" rel="noreferrer">@newgeneration_academy_</a>
+                                                    <a href="https://www.instagram.com/robertoybeatrice/" target="_blank"
+                                                       className="text-pink-200 hover:underline" rel="noreferrer">@robertoybeatrice</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -529,9 +578,7 @@ const App: React.FC = () => {
 
                                     <div
                                         className="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-pink-500/20">
-                                        <h3 className="text-2xl font-bold text-white mb-4">Orari</h3>
-                                        <div className="text-pink-200">
-                                            <p className="mb-2">Lunedì - Giovedì: 20:30 - 22:30</p>
+                                        <div className="text-pink-200 font-bold">
                                             <p>Chiamaci per informazioni sui corsi e/o prenotare la tua lezione di prova
                                                 gratuita!</p>
                                         </div>
@@ -539,25 +586,30 @@ const App: React.FC = () => {
                                 </div>
 
                                 <div
-                                    className="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 h-fit">
-                                    <h3 className="text-2xl font-bold text-white mb-6">Inviaci un Messaggio</h3>
+                                    className="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 h-fit opacity-50">
+                                    <h3 className="text-2xl font-bold text-white">Inviaci un Messaggio</h3>
+                                    <b className={"text-purple-300 mb-6"}>Modulo disabilitato - Contattaci tramite telefono o Instagram</b>
                                     <div className="space-y-4">
                                         <input
+                                            disabled={true}
                                             type="text"
                                             placeholder="Il tuo nome"
                                             className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                                         />
                                         <input
+                                            disabled={true}
                                             type="email"
                                             placeholder="La tua email"
                                             className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                                         />
                                         <textarea
+                                            disabled={true}
                                             rows={4}
                                             placeholder="Il tuo messaggio"
                                             className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none resize-none"
                                         />
                                         <button
+                                            disabled={true}
                                             type="button"
                                             onClick={handleContactSubmit}
                                             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
@@ -574,7 +626,7 @@ const App: React.FC = () => {
 
             {/* Mobile Navigation */}
             <div
-                className="md:hidden fixed bottom-10 left-4 right-4 bg-black/80 backdrop-blur-md rounded-full p-2 border border-purple-500/30">
+                className="md:hidden fixed bottom-5 left-4 right-4 bg-black/80 backdrop-blur-md rounded-full p-2 border border-purple-500/30">
                 <div className="flex justify-around">
                     <button
                         onClick={() => {
@@ -642,6 +694,15 @@ const App: React.FC = () => {
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
                             <input
+                                type="text"
+                                name="surname"
+                                placeholder="Il tuo cognome *"
+                                value={formData.surname}
+                                onChange={handleInputChange}
+                                required
+                                className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
+                            />
+                            <input
                                 type="email"
                                 name="email"
                                 placeholder="La tua email *"
@@ -653,23 +714,11 @@ const App: React.FC = () => {
                             <input
                                 type="tel"
                                 name="phone"
-                                placeholder="Il tuo telefono"
+                                placeholder="Il tuo telefono *"
                                 value={formData.phone}
                                 onChange={handleInputChange}
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
-                            <select
-                                name="course"
-                                value={formData.course}
-                                onChange={handleInputChange}
-                                required
-                                className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:border-pink-500 focus:outline-none"
-                            >
-                                <option value="">Scegli il corso *</option>
-                                <option value="salsa">Salsa</option>
-                                <option value="bachata">Bachata</option>
-                                <option value="lady-style">Lady Style</option>
-                            </select>
                             <select
                                 name="day"
                                 value={formData.day}
@@ -694,10 +743,33 @@ const App: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleSubmit}
+                                disabled={loadingSending}
                                 className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-lg font-bold hover:shadow-lg transition-all duration-300"
                             >
-                                Prenota Ora
+                                {loadingSending ? 'Inviando la tua prenotazione...' : 'Prenota Ora'}
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {formSent && (
+                <div className="fixed inset-0 z-60 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/80"></div>
+                    <div
+                        className="relative bg-gray-900 p-8 rounded-2xl border-2 border-pink-400 max-w-md mx-4 text-center">
+                        <CheckCircle className="mx-auto text-pink-400 mb-4" size={64}/>
+                        <h3 className="text-2xl font-black text-white mb-2">
+                            Prenotazione Inviata!
+                        </h3>
+                        <p className="text-pink-400 font-bold text-lg mb-2">
+                            Grazie {formData.name}, la tua prova gratuita è prenotata!
+                        </p>
+                        <p className="text-gray-300 text-sm mb-4">
+                            Ti contatteremo al più presto per confermare il giorno e l'orario.
+                        </p>
+                        <div className="bg-black/50 p-3 rounded-lg">
+                            <p className="text-xs text-gray-400">Questo messaggio si chiuderà automaticamente...</p>
                         </div>
                     </div>
                 </div>
@@ -708,7 +780,7 @@ const App: React.FC = () => {
                     <div className="text-center">
                         <div className="mt-2 text-sm text-gray-200">
                             Sito sviluppato da <a href="https://www.instagram.com/mattiacucuzza_/" target="_blank"
-                                                  className="text-purple-400 hover:underline">Mattia Cucuzza</a>
+                                                  className="text-purple-400 hover:underline" rel="noreferrer">Mattia Cucuzza</a>
                         </div>
                     </div>
                 </div>
