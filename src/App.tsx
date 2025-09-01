@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Calendar, Clock, Heart, Instagram, Mail, MapPin, Phone, Users} from 'lucide-react';
 import {DaySchedule, FormData, NavButtonProps, SectionType} from './types';
 
@@ -85,46 +85,43 @@ const App: React.FC = () => {
         </button>
     );
 
-    const AutoCarousel: React.FC = () => {
-        const items = [
-            "🎵 Corsi per tutti i livelli",
-            "💃 Lady Style incluso",
-            "🕺 Maestri professionisti",
-            "🔥 Eventi e serate",
-            "🌍 Community internazionale",
-            "📅 Lezioni ogni settimana",
-            "💜 Passione e divertimento",
+        const badges = [
+            {
+                icon: "🎵",
+                title: "Tutti i Livelli",
+                subtitle: "Principianti e avanzati",
+                gradient: "from-purple-500 to-purple-600"
+            },
+            {
+                icon: "💃",
+                title: "Lady Style",
+                subtitle: "Femminilità e grazia",
+                gradient: "from-pink-500 to-pink-600"
+            },
+            {
+                icon: "🕺",
+                title: "Maestri Pro",
+                subtitle: "Esperienza internazionale",
+                gradient: "from-purple-600 to-pink-500"
+            },
+            {
+                icon: "🔥",
+                title: "Eventi & Serate",
+                subtitle: "Divertimento garantito",
+                gradient: "from-pink-600 to-purple-500"
+            }
         ];
 
-        return (
-            <div className="w-full overflow-hidden mb-12">
-                <div className="flex animate-marquee w-[300px] sm:w-[200px] md:w-[800px] lg:w-[300px]">
-                    {items.map((text, i) => (
-                        <div
-                            key={i}
-                            className="flex-shrink-0 px-2 py-3"
-                            style={{ width: "100%" }} // mobile: un badge pieno
-                        >
-                            <div className="bg-black/20 backdrop-blur-sm px-6 py-3 rounded-full border border-purple-500/30 text-center">
-                                <span className="text-purple-300">{text}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    };
-
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-x-hidden pb-12">
+        <div
+            className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-x-hidden pb-6">
             {/* Header */}
             <header className="fixed top-0 w-full bg-black backdrop-blur-md z-50 border-b border-purple-500/20">
                 <div className="max-w-7xl mx-auto px-4 py-2">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                             <div>
-                                <h1 className="text-lg font-bold text-white">New Generation Academy</h1>
-                                <p className="text-purple-300 text-sm">by Roberto & Beatrice</p>
+                                <img src="/logo_w.png" alt="Logo" className="w-full h-16"/>
                             </div>
                         </div>
 
@@ -169,23 +166,31 @@ const App: React.FC = () => {
                 </div>
             </header>
 
-            <main className="pt-24">
+            <main className="lg:pt-24 pt-16 pb-24">
                 {/* Home Section */}
                 {activeSection === 'home' && (
-                    <section className="h-full flex items-center mb-20">
-                        <div className="max-w-7xl mx-auto px-4 py-1">
+                    <section className="h-full flex items-center lg:py-8">
+                        <div className="max-w-full mx-auto py-1">
                             <div className="text-center mb-12">
-                                <div className="mb-8 relative">
-                                    <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
-                                        DANCE
-                                    </h1>
-                                    <h2 className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4">
-                                        YOUR PASSION
-                                    </h2>
+                                <div className="w-full mb-12 relative overflow-hidden rounded-2xl shadow-2xl">
                                     <div
-                                        className="absolute -top-10 -right-10 w-12 h-12 sm:w-20 sm:h-20 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full opacity-20 animate-pulse"></div>
-                                    <div
-                                        className="absolute -bottom-5 -left-5 w-8 h-8 sm:w-16 sm:h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-30 animate-bounce"></div>
+                                        className="relative h-64 sm:h-80 md:h-96">
+                                        <img
+                                            src="/walpaper.jpeg"
+                                            alt="Coppia che balla salsa in una scuola di danza"
+                                            className="w-full h-full object-cover object-center"
+                                        />
+                                        <div
+                                            className="absolute inset-0 bg-gradient-to-r from-purple-900/50 to-pink-900/50"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="text-center text-white">
+                                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">New
+                                                    Generation Academy</h3>
+                                                <p className="text-lg sm:text-xl font-bold text-purple-200">by Roberto e
+                                                    Beatrice</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <p className="text-xl text-purple-200 mb-8 max-w-3xl mx-auto">
@@ -195,18 +200,67 @@ const App: React.FC = () => {
                                     Una settimana di prove gratuite ti aspetta dal 22 settembre!
                                 </p>
 
-                                <AutoCarousel/>
+                                <div className="hidden md:grid md:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                                    {badges.map((badge, i) => (
+                                        <div
+                                            key={i}
+                                            className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
+                                        >
+                                            <div
+                                                className={`bg-gradient-to-br ${badge.gradient} p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300`}>
+                                                <div className="text-center">
+                                                    <div
+                                                        className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                                                        {badge.icon}
+                                                    </div>
+                                                    <h3 className="text-white font-bold text-lg mb-2">
+                                                        {badge.title}
+                                                    </h3>
+                                                    <p className="text-white/80 text-sm">
+                                                        {badge.subtitle}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Layout Mobile - Grid 2x2 */}
+                                <div className="md:hidden grid grid-cols-2 gap-4 max-w-sm mx-auto px-4">
+                                    {badges.map((badge, i) => (
+                                        <div
+                                            key={i}
+                                            className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
+                                        >
+                                            <div
+                                                className={`bg-gradient-to-br ${badge.gradient} p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 h-full`}>
+                                                <div className="text-center">
+                                                    <div
+                                                        className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300">
+                                                        {badge.icon}
+                                                    </div>
+                                                    <h3 className="text-white font-bold text-sm mb-1">
+                                                        {badge.title}
+                                                    </h3>
+                                                    <p className="text-white/80 text-xs">
+                                                        {badge.subtitle}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
 
                                 <button
                                     onClick={() => setShowBookingForm(true)}
-                                    className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-full text-xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+                                    className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 mt-8 rounded-full text-xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                                 >
                                     Prenota la tua Prova Gratuita
                                 </button>
                             </div>
 
                             {/* Sezioni Informative */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 max-w-7xl">
                                 {/* La Nostra Sede */}
                                 <div
                                     className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30">
@@ -215,7 +269,8 @@ const App: React.FC = () => {
                                         <h3 className="text-2xl font-bold text-white">La Nostra Sede</h3>
                                     </div>
                                     <p className="text-purple-200 mb-6">
-                                        Situata nel complesso scolastico Gauss, la nostra accademia offre uno spazio moderno e
+                                        Situata nel complesso scolastico Gauss, la nostra accademia offre uno spazio
+                                        moderno e
                                         accogliente,
                                         dotato di ampie sale da ballo, specchi professionali e sistema audio di alta
                                         qualità.
@@ -280,10 +335,10 @@ const App: React.FC = () => {
 
                 {/* Corsi Section */}
                 {activeSection === 'corsi' && (
-                    <section className="h-full py-1">
+                    <section className="h-full py-8">
                         <div className="max-w-7xl mx-auto px-4">
-                            <div className="text-center mb-16">
-                                <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
+                            <div className="text-center">
+                                <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
                                     I Nostri Corsi
                                 </h2>
                                 <p className="text-xl text-purple-200 mb-8">
@@ -338,10 +393,10 @@ const App: React.FC = () => {
 
                 {/* Maestri Section */}
                 {activeSection === 'maestri' && (
-                    <section className="h-full py-1">
+                    <section className="h-full py-8">
                         <div className="max-w-7xl mx-auto px-4">
-                            <div className="text-center mb-16">
-                                <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
+                            <div className="text-center mb-8">
+                                <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
                                     I Tuoi Maestri
                                 </h2>
                                 <p className="text-xl text-purple-200">
@@ -355,7 +410,8 @@ const App: React.FC = () => {
                                     className="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 text-center">
                                     <div
                                         className="w-48 h-48 mx-auto mb-6 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full flex items-center justify-center">
-                                        <Users className="text-white" size={80}/>
+                                        <img src="/bob.JPG" alt="Roberto"
+                                             className="w-48 h-48 object-cover rounded-full object-top"/>
                                     </div>
                                     <h3 className="text-3xl font-bold text-white mb-4">Roberto</h3>
                                     <div className="text-purple-200 space-y-4">
@@ -379,7 +435,8 @@ const App: React.FC = () => {
                                     className="bg-black/30 backdrop-blur-sm rounded-2xl p-8 border border-pink-500/20 text-center">
                                     <div
                                         className="w-48 h-48 mx-auto mb-6 bg-gradient-to-r from-pink-600 to-pink-800 rounded-full flex items-center justify-center">
-                                        <Heart className="text-white" size={80}/>
+                                        <img src="/bea.JPG" alt="Roberto"
+                                             className="w-48 h-48 object-cover rounded-full object-top"/>
                                     </div>
                                     <h3 className="text-3xl font-bold text-white mb-4">Beatrice</h3>
                                     <div className="text-pink-200 space-y-4">
@@ -416,10 +473,10 @@ const App: React.FC = () => {
 
                 {/* Contatti Section */}
                 {activeSection === 'contatti' && (
-                    <section className="h-full py-1">
+                    <section className="h-full py-8">
                         <div className="max-w-7xl mx-auto px-4">
-                            <div className="text-center mb-16">
-                                <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
+                            <div className="text-center mb-8">
+                                <h2 className="text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-6">
                                     Contattaci
                                 </h2>
                                 <p className="text-xl text-purple-200">
@@ -438,7 +495,8 @@ const App: React.FC = () => {
                                                 <MapPin className="text-purple-400" size={24}/>
                                                 <div>
                                                     <h4 className="text-white font-semibold">Dove ci trovi</h4>
-                                                    <p className="text-purple-200">Roma, Via della Bufalotta 556, 00139 RM</p>
+                                                    <p className="text-purple-200">Roma, Via della Bufalotta 556, 00139
+                                                        RM</p>
                                                 </div>
                                             </div>
 
@@ -474,7 +532,8 @@ const App: React.FC = () => {
                                         <h3 className="text-2xl font-bold text-white mb-4">Orari</h3>
                                         <div className="text-pink-200">
                                             <p className="mb-2">Lunedì - Giovedì: 20:30 - 22:30</p>
-                                            <p>Chiamaci per informazioni sui corsi e/o prenotare la tua lezione di prova gratuita!</p>
+                                            <p>Chiamaci per informazioni sui corsi e/o prenotare la tua lezione di prova
+                                                gratuita!</p>
                                         </div>
                                     </div>
                                 </div>
@@ -515,28 +574,40 @@ const App: React.FC = () => {
 
             {/* Mobile Navigation */}
             <div
-                className="md:hidden fixed bottom-20 left-4 right-4 bg-black/80 backdrop-blur-md rounded-full p-2 border border-purple-500/30">
+                className="md:hidden fixed bottom-10 left-4 right-4 bg-black/80 backdrop-blur-md rounded-full p-2 border border-purple-500/30">
                 <div className="flex justify-around">
                     <button
-                        onClick={() => setActiveSection('home')}
+                        onClick={() => {
+                            setActiveSection('home');
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        }}
                         className={`p-3 rounded-full ${activeSection === 'home' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
                         <Heart size={20}/>
                     </button>
                     <button
-                        onClick={() => setActiveSection('corsi')}
+                        onClick={() => {
+                            setActiveSection('corsi');
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        }}
                         className={`p-3 rounded-full ${activeSection === 'corsi' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
                         <Calendar size={20}/>
                     </button>
                     <button
-                        onClick={() => setActiveSection('maestri')}
+                        onClick={() => {
+                            setActiveSection('maestri');
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        }}
                         className={`p-3 rounded-full ${activeSection === 'maestri' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
                         <Users size={20}/>
                     </button>
                     <button
-                        onClick={() => setActiveSection('contatti')}
+                        onClick={() => {
+                            setActiveSection('contatti');
+                            window.scrollTo({top: 0, behavior: 'smooth'});
+                        }}
                         className={`p-3 rounded-full ${activeSection === 'contatti' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
                         <Phone size={20}/>
@@ -631,6 +702,17 @@ const App: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            <footer className="py-2 mb-24 sm:mb-0 bg-gradient-to-tb from-purple-900 via-purple-800 to-pink-900">
+                <div className="container mx-auto">
+                    <div className="text-center">
+                        <div className="mt-2 text-sm text-gray-200">
+                            Sito sviluppato da <a href="https://www.instagram.com/mattiacucuzza_/" target="_blank"
+                                                  className="text-purple-400 hover:underline">Mattia Cucuzza</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 };
