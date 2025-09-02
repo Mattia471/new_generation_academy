@@ -30,14 +30,14 @@ const App: React.FC = () => {
             day: 'MARTEDÌ',
             classes: [
                 { time: '20:30', name: 'Bachata Lady Style', level: 'Tutti i livelli' },
-                { time: '21:30', name: 'Bachata Sensual Liv. 2', level: 'Intermedio' }
+                { time: '21:30', name: 'Bachata Sensual Liv. 2', level: 'Intermedio 2' }
             ]
         },
         {
             day: 'MERCOLEDÌ',
             classes: [
-                { time: '20:30', name: 'Salsa Liv. 1', level: 'Principianti' },
-                { time: '21:30', name: 'Bachata Sensual Liv. 1', level: 'Principianti' }
+                { time: '20:30', name: 'Salsa Liv. 1', level: 'Intermedio' },
+                { time: '21:30', name: 'Bachata Sensual Liv. 1', level: 'Intermedio' }
             ]
         },
         {
@@ -154,7 +154,7 @@ const App: React.FC = () => {
             {
                 icon: "💃",
                 title: "Lady Style",
-                subtitle: "Femminilità e grazia",
+                subtitle: "Femminilità ed eleganza",
                 gradient: "from-pink-500 to-pink-600"
             },
             {
