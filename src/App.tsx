@@ -219,7 +219,7 @@ const App: React.FC = () => {
 
                         <button
                             onClick={() => setShowBookingForm(true)}
-                            className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                            className="bg-gradient-to-r from-pink-500 to-purple-600 text-white lg:px-6 px-3 py-3 rounded-full font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                         >
                             Prova Gratuita
                         </button>
