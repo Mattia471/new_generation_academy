@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Calendar, CheckCircle, Clock, Heart, Instagram, Mail, MapPin, Phone, Users} from 'lucide-react';
 import {DaySchedule, FormData, NavButtonProps, SectionType} from './types';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 const App: React.FC = () => {
     const [activeSection, setActiveSection] = useState<SectionType>('home');
@@ -174,6 +175,7 @@ const App: React.FC = () => {
         <div
             className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-x-hidden pb-6">
             <Analytics />
+            <SpeedInsights />
             {/* Header */}
             <header className="fixed top-0 w-full bg-black backdrop-blur-md z-50 border-b border-purple-500/20">
                 <div className="max-w-7xl mx-auto px-4 py-2">
