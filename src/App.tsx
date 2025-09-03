@@ -252,6 +252,10 @@ const App: React.FC = () => {
             }
         ];
 
+    useEffect(() => {
+        window.scrollTo({top: 0, behavior: 'smooth'})
+    }, [activeSection])
+
     return (
         <div
             className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-x-hidden pb-6">
@@ -476,8 +480,9 @@ const App: React.FC = () => {
                                 </div>
                             </div>
 
+                            {/*TEAM PROJECT*/}
                             <div
-                                className="bg-gradient-to-br from-purple-600/20 to-pink-800/20 backdrop-blur-sm rounded-3xl p-8 border border-purple-500/30 max-w-7xl mx-auto mt-8">
+                                className="bg-gradient-to-br from-purple-600/20 to-pink-800/20 backdrop-blur-sm rounded-3xl p-8 border border-purple-500/30 max-w-7xl mx-auto mt-8" id={"teamProject"}>
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                                     {/* Immagine Locandina */}
                                     <div className="order-2 lg:order-1">
@@ -861,7 +866,6 @@ const App: React.FC = () => {
                     <button
                         onClick={() => {
                             setActiveSection('home');
-                            window.scrollTo({top: 0, behavior: 'smooth'});
                         }}
                         className={`p-3 rounded-full ${activeSection === 'home' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
@@ -870,7 +874,6 @@ const App: React.FC = () => {
                     <button
                         onClick={() => {
                             setActiveSection('corsi');
-                            window.scrollTo({top: 0, behavior: 'smooth'});
                         }}
                         className={`p-3 rounded-full ${activeSection === 'corsi' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
@@ -879,7 +882,6 @@ const App: React.FC = () => {
                     <button
                         onClick={() => {
                             setActiveSection('maestri');
-                            window.scrollTo({top: 0, behavior: 'smooth'});
                         }}
                         className={`p-3 rounded-full ${activeSection === 'maestri' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
@@ -888,7 +890,6 @@ const App: React.FC = () => {
                     <button
                         onClick={() => {
                             setActiveSection('contatti');
-                            window.scrollTo({top: 0, behavior: 'smooth'});
                         }}
                         className={`p-3 rounded-full ${activeSection === 'contatti' ? 'bg-purple-600' : 'text-purple-300'}`}
                     >
