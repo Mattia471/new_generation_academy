@@ -11,13 +11,20 @@ export interface DaySchedule {
     classes: ClassInfo[];
 }
 
-export interface FormData {
+export interface FreeTrialForm {
     name: string;
     surname: string;
     email: string;
     phone: string;
     day: string;
     message: string;
+}
+
+export interface TeamProjectForm {
+    name: string;
+    surname: string;
+    email: string;
+    phone: string;
 }
 
 export interface NavButtonProps {

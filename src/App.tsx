@@ -1,13 +1,28 @@
-import React, {useState} from 'react';
-import {Calendar, CheckCircle, Clock, Heart, Instagram, Mail, MapPin, Phone, Users} from 'lucide-react';
-import {DaySchedule, FormData, NavButtonProps, SectionType} from './types';
-import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import React, {useEffect, useState} from 'react';
+import {
+    ArrowDown,
+    Calendar,
+    CheckCircle,
+    Clock,
+    Heart,
+    Instagram,
+    Mail,
+    MapPin,
+    Phone,
+    Send,
+    Star,
+    User,
+    Users,
+    X
+} from 'lucide-react';
+import {DaySchedule, FreeTrialForm, NavButtonProps, SectionType, TeamProjectForm} from './types';
+import {Analytics} from '@vercel/analytics/react';
+import {SpeedInsights} from "@vercel/speed-insights/react"
 
 const App: React.FC = () => {
     const [activeSection, setActiveSection] = useState<SectionType>('home');
     const [showBookingForm, setShowBookingForm] = useState<boolean>(false);
-    const [formData, setFormData] = useState<FormData>({
+    const [formFreeTrial, setFormFreeTrial] = useState<FreeTrialForm>({
         name: '',
         surname: '',
         email: '',
@@ -17,6 +32,42 @@ const App: React.FC = () => {
     });
     const [formSent, setFormSent] = useState<boolean>(false);
     const [loadingSending, setLoadingSending] = useState<boolean>(false);
+    const [showTeamForm, setShowTeamForm] = useState<boolean>(false);
+    const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number }>({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+    });
+    const [formTeamProject, setFormTeamProject] = useState<TeamProjectForm>({
+        name: '',
+        surname: '',
+        email: '',
+        phone: ''
+    });
+
+   useEffect(() => {
+        const targetDate = new Date('2025-10-01T20:00:00'); // Data e ora dell'evento
+        const interval = setInterval(() => {
+            const now = new Date();
+            const difference = targetDate.getTime() - now.getTime();
+
+            if (difference <= 0) {
+                clearInterval(interval);
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+            } else {
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((difference / (1000 * 60)) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+                setTimeLeft({ days, hours, minutes, seconds });
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+
 
     const courses: DaySchedule[] = [
         {
@@ -49,81 +100,111 @@ const App: React.FC = () => {
         }
     ];
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>): void => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>, set:any) => {
         const { name, value } = e.target;
-        setFormData(prevData => ({
+        set((prevData: any) => ({
             ...prevData,
             [name]: value
         }));
     };
 
-    const sendBookingEmail = async (formData: {
-        name: string;
-        surname: string;
-        email: string;
-        phone: string;
-        day: string;
-        message?: string;
-    }): Promise<void> => {
+
+    const sendFreeTrialEmail = async (formData: FreeTrialForm): Promise<void> => {
         try {
-            const serviceID = 'service_6lwhe1n';   // Dal dashboard EmailJS
-            const templateID = 'template_bmwlowp'; // Dal dashboard EmailJS
-            const publicKey = 'yICjmAQWVh4F8z63n'; // Dal dashboard EmailJS
-
-            // Parametri che verranno sostituiti nei {{ }} del template EmailJS
-            const emailParams = {
-                name: formData.name,
-                surname: formData.surname,
-                email: formData.email,
-                phone: formData.phone,
-                day: formData.day,
-                message: formData.message || 'Nessuna nota aggiuntiva',
-                time: new Date().toLocaleString('it-IT', {
-                    dateStyle: 'short',
-                    timeStyle: 'short'
-                })
-            };
-
             // Invio email con EmailJS
-            const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+            await fetch('https://api.emailjs.com/api/v1.0/email/send', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    service_id: serviceID,
-                    template_id: templateID,
-                    user_id: publicKey,
-                    template_params: emailParams
+                    service_id: 'service_6lwhe1n',
+                    template_id: 'template_bmwlowp',
+                    user_id: 'yICjmAQWVh4F8z63n',
+                    template_params: {
+                        name: formData.name,
+                        surname: formData.surname,
+                        email: formData.email,
+                        phone: formData.phone,
+                        day: formData.day,
+                        message: formData.message || 'Nessuna nota aggiuntiva',
+                        time: new Date().toLocaleString('it-IT', {
+                            dateStyle: 'short',
+                            timeStyle: 'short'
+                        })
+                    }
                 })
             });
-
-            if (response.ok) {
-                console.log('✅ Email inviata con successo');
-            } else {
-                console.error('❌ Errore invio email:', response.statusText);
-            }
-
         } catch (error) {
             console.error('❌ Errore EmailJS:', error);
         }
     };
 
-    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
+    const sendTeamProjectEmail = async (formData: TeamProjectForm): Promise<void> => {
+        try {
+            // Invio email con EmailJS
+            await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    service_id: 'service_6lwhe1n',
+                    template_id: 'template_p9eblu7',
+                    user_id: 'yICjmAQWVh4F8z63n',
+                    template_params: {
+                        name: formData.name,
+                        surname: formData.surname,
+                        email: formData.email,
+                        phone: formData.phone,
+                        time: new Date().toLocaleString('it-IT', {
+                            dateStyle: 'short',
+                            timeStyle: 'short'
+                        })
+                    }
+                })
+            });
+        } catch (error) {
+            console.error('❌ Errore EmailJS:', error);
+        }
+    };
+
+
+    const submitTeamProjectForm = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        // Validazione base
+        if (!formTeamProject.name || !formTeamProject.email || !formTeamProject.phone || !formTeamProject.surname) {
+            alert('Per favore compila tutti i campi obbligatori.');
+            return;
+        }
+
+        setLoadingSending(true);
+        sendTeamProjectEmail(formTeamProject).then(() => {
+            setLoadingSending(false);
+            setShowTeamForm(false);
+            setFormTeamProject({name: '', surname: '', email: '', phone: ''});
+            setFormSent(true);
+            setTimeout(() => setFormSent(false), 3000);
+        });
+    };
+
+
+    const submitFreeTrialForm = async (e: React.MouseEvent<HTMLButtonElement>): Promise<void> => {
         e.preventDefault();
 
         // Validazione base
-        if (!formData.name || !formData.email || !formData.day || !formData.phone || !formData.surname) {
+        if (!formFreeTrial.name || !formFreeTrial.email || !formFreeTrial.day || !formFreeTrial.phone || !formFreeTrial.surname) {
             alert('Per favore compila tutti i campi obbligatori.');
             return;
         }
         setLoadingSending(true);
-        await sendBookingEmail(formData);
-        setLoadingSending(false);
-        setShowBookingForm(false);
-        setFormData({name: '', surname: '', email: '', phone: '', day: '', message: ''});
-        setFormSent(true);
-        setTimeout(() => setFormSent(false), 3000);
+        await sendFreeTrialEmail(formFreeTrial).then(() => {
+            setLoadingSending(false);
+            setShowBookingForm(false);
+            setFormFreeTrial({ name: '', surname: '', email: '', phone: '', day: '', message: '' });
+            setFormSent(true);
+            setTimeout(() => setFormSent(false), 3000);
+        })
     };
 
     const handleContactSubmit = (): void => {
@@ -232,7 +313,7 @@ const App: React.FC = () => {
                 {activeSection === 'home' && (
                     <section className="h-full flex items-center lg:py-8">
                         <div className="max-w-full mx-auto py-1">
-                            <div className="text-center mb-12">
+                            <div className="text-center mb-8">
                                 <div className="w-full mb-12 relative overflow-hidden rounded-2xl shadow-2xl">
                                     <div
                                         className="relative h-64 sm:h-80 md:h-96">
@@ -320,7 +401,9 @@ const App: React.FC = () => {
                                 </button>
                             </div>
 
+
                             {/* Sezioni Informative */}
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8 max-w-7xl">
                                 {/* La Nostra Sede */}
                                 <div
@@ -332,8 +415,10 @@ const App: React.FC = () => {
                                     <p className="text-purple-200 mb-6">
                                         La nostra sala si trova all’interno del complesso scolastico Gauss.
                                         L’Accademia mette a disposizione uno spazio moderno e accogliente,
-                                        con un’ampia sala da ballo, specchi professionali e un sistema audio di alta qualità.
-                                        È presente anche un parcheggio gratuito all’interno del complesso. Un ambiente ideale per imparare, allenarsi e divertirsi!
+                                        con un’ampia sala da ballo, specchi professionali e un sistema audio di alta
+                                        qualità.
+                                        È presente anche un parcheggio gratuito all’interno del complesso. Un ambiente
+                                        ideale per imparare, allenarsi e divertirsi!
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <a
@@ -362,12 +447,15 @@ const App: React.FC = () => {
                                         <Heart className="text-pink-400" size={32}/>
                                         <div className={"flex flex-col"}>
                                             <h3 className="text-2xl font-bold text-white">Roberto & Beatrice</h3>
-                                            <small className={"text-white"}> dove la danza caraibica diventa amicizia, crescita e divertimento ✨</small>
+                                            <small className={"text-white"}> dove la danza caraibica diventa amicizia,
+                                                crescita e divertimento ✨</small>
                                         </div>
                                     </div>
                                     <p className="text-pink-200 mb-6">
-                                        Due maestri appassionati con anni di esperienza internazionale nel mondo della danza caraibica.
-                                        Oltre alla tecnica e alla didattica, offrono un rapporto umano fatto di amicizia, energia e supporto anche nella vita quotidiana.
+                                        Due maestri appassionati con anni di esperienza internazionale nel mondo della
+                                        danza caraibica.
+                                        Oltre alla tecnica e alla didattica, offrono un rapporto umano fatto di
+                                        amicizia, energia e supporto anche nella vita quotidiana.
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-4">
                                         <button
@@ -387,6 +475,143 @@ const App: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            <div
+                                className="bg-gradient-to-br from-purple-600/20 to-pink-800/20 backdrop-blur-sm rounded-3xl p-8 border border-purple-500/30 max-w-7xl mx-auto mt-8">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                                    {/* Immagine Locandina */}
+                                    <div className="order-2 lg:order-1">
+                                        <div
+                                            className="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-all duration-300">
+                                            <a href={'https://www.instagram.com/p/DM8FHCxo2XL/'} target={"_blank"} rel="noreferrer">
+                                                <img
+                                                    src="/locadina-team-project.jpeg"
+                                                    alt="Roberto y Beatrice Project Team - Bachata Sensual"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </a>
+                                            <div
+                                                className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                                        </div>
+                                    </div>
+
+                                    {/* Contenuto Testuale */}
+                                    <div className="order-1 lg:order-2">
+                                        <div className="flex items-center space-x-3 mb-6">
+                                            <Star className="text-yellow-400" size={32}/>
+                                            <div className={"flex flex-col"}>
+                                                <h3 className="text-2xl font-bold text-white">Team Project</h3>
+                                                <small className={"text-white"}> Bachata Sensual by Roberto y Beatrice</small>
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-6">
+                                            <p className="text-purple-200 mb-4 leading-relaxed">
+                                                <span className="text-pink-400 font-semibold">Vivi la passione della bachata sensual a 360 gradi!</span>
+                                            </p>
+                                            <p className="text-purple-200 mb-4 leading-relaxed">
+                                                Diventa parte del nuovo team di <span
+                                                className="text-purple-400 font-semibold">Roberto & Beatrice</span><br/>
+                                                … e porta il tuo talento dai locali di <span
+                                                className="text-yellow-400 font-semibold">Roma</span> ai <span
+                                                className="text-yellow-400 font-semibold">palchi internazionali 🌎</span>
+                                            </p>
+                                            <p className="text-purple-200 mb-4 leading-relaxed">
+                                                <span className="text-pink-400 font-semibold">Nuovo team, nuova coreografia ⬇️</span><br/>
+                                            </p>
+
+                                            <div
+                                                className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-4 mb-6 border border-purple-400/30">
+                                                <h5 className="text-white font-bold mb-2">Requisito:</h5>
+                                                <ul className="text-purple-200 space-y-2">
+                                                    <li className="flex items-center space-x-2">
+                                                        <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
+                                                        <span>Livello Avanzato</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div
+                                                className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg p-4 mb-6 border border-purple-400/30">
+                                                <h5 className="text-white font-bold mb-2">Cosa include:</h5>
+                                                <ul className="text-purple-200 space-y-2">
+                                                    <li className="flex items-center space-x-2">
+                                                        <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
+                                                        <span>Coreografia esclusiva di Bachata Sensual</span>
+                                                    </li>
+                                                    <li className="flex items-center space-x-2">
+                                                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                                        <span>Tecnica avanzata</span>
+                                                    </li>
+                                                    <li className="flex items-center space-x-2">
+                                                        <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
+                                                        <span>Prove: una volta al mese (3h)</span>
+                                                    </li>
+                                                    <li className="flex items-center space-x-2">
+                                                        <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                                        <span>Quando la coreografia sarà pronta, inizieranno le esibizioni a Roma, in Italia e all’estero, con programma definito in anticipo.</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div className="text-center">
+                                                <div className="mb-4">
+                                                    <div className="flex items-center justify-center space-x-2 mb-3">
+                                                        <ArrowDown className="text-yellow-400" size={24}/>
+                                                        <h5 className="text-yellow-300 font-bold text-lg">Il progetto
+                                                            inizia tra</h5>
+                                                        <ArrowDown className="text-yellow-400" size={24}/>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-4 gap-2 max-w-sm mx-auto mb-4">
+                                                        <div
+                                                            className="bg-gradient-to-br from-pink-500/30 to-purple-600/30 rounded-lg p-3 border border-pink-400/50">
+                                                            <div
+                                                                className="text-2xl font-bold text-white">{timeLeft.days}</div>
+                                                            <div className="text-xs text-purple-200">Giorni</div>
+                                                        </div>
+                                                        <div
+                                                            className="bg-gradient-to-br from-pink-500/30 to-purple-600/30 rounded-lg p-3 border border-pink-400/50">
+                                                            <div
+                                                                className="text-2xl font-bold text-white">{timeLeft.hours}</div>
+                                                            <div className="text-xs text-purple-200">Ore</div>
+                                                        </div>
+                                                        <div
+                                                            className="bg-gradient-to-br from-pink-500/30 to-purple-600/30 rounded-lg p-3 border border-pink-400/50">
+                                                            <div
+                                                                className="text-2xl font-bold text-white">{timeLeft.minutes}</div>
+                                                            <div className="text-xs text-purple-200">Min</div>
+                                                        </div>
+                                                        <div
+                                                            className="bg-gradient-to-br from-pink-500/30 to-purple-600/30 rounded-lg p-3 border border-pink-400/50">
+                                                            <div
+                                                                className="text-2xl font-bold text-white">{timeLeft.seconds}</div>
+                                                            <div className="text-xs text-purple-200">Sec</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => setShowTeamForm(true)}
+                                                    className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-2 mx-auto"
+                                                >
+                                                    <Users size={24}/>
+                                                    <span>Unisciti al Team Project</span>
+                                                </button>
+                                                <a
+                                                    href="https://www.instagram.com/p/DM8FHCxo2XL/"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center text-pink-400 hover:underline mt-2"
+                                                >
+                                                    <Instagram className="mr-1" size={18}/>
+                                                    Guarda il post su Instagram
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </section>
                 )}
@@ -476,7 +701,8 @@ const App: React.FC = () => {
                                     </div>
                                     <h3 className="text-3xl font-bold text-white mb-4">Roberto</h3>
                                     <div className="text-purple-200 space-y-4">
-                                        <p>Ha studiato diverse discipline, specializzandosi in Salsa Los Angeles, New York Style e Bachata Sensual, unendo precisione e musicalità.</p>
+                                        <p>Ha studiato diverse discipline, specializzandosi in Salsa Los Angeles, New
+                                            York Style e Bachata Sensual, unendo precisione e musicalità.</p>
                                     </div>
                                     <div className="mt-6 flex justify-center space-x-4">
                                         <span
@@ -692,8 +918,8 @@ const App: React.FC = () => {
                                 type="text"
                                 name="name"
                                 placeholder="Il tuo nome *"
-                                value={formData.name}
-                                onChange={handleInputChange}
+                                value={formFreeTrial.name}
+                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
@@ -701,8 +927,8 @@ const App: React.FC = () => {
                                 type="text"
                                 name="surname"
                                 placeholder="Il tuo cognome *"
-                                value={formData.surname}
-                                onChange={handleInputChange}
+                                value={formFreeTrial.surname}
+                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
@@ -710,8 +936,8 @@ const App: React.FC = () => {
                                 type="email"
                                 name="email"
                                 placeholder="La tua email *"
-                                value={formData.email}
-                                onChange={handleInputChange}
+                                value={formFreeTrial.email}
+                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
@@ -719,14 +945,14 @@ const App: React.FC = () => {
                                 type="tel"
                                 name="phone"
                                 placeholder="Il tuo telefono *"
-                                value={formData.phone}
-                                onChange={handleInputChange}
+                                value={formFreeTrial.phone}
+                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
                             <select
                                 name="day"
-                                value={formData.day}
-                                onChange={handleInputChange}
+                                value={formFreeTrial.day}
+                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:border-pink-500 focus:outline-none"
                             >
@@ -739,20 +965,136 @@ const App: React.FC = () => {
                             <textarea
                                 name="message"
                                 placeholder="Note aggiuntive (opzionale)"
-                                value={formData.message}
-                                onChange={handleInputChange}
+                                value={formFreeTrial.message}
+                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
                                 rows={3}
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none resize-none"
                             />
                             <button
                                 type="button"
-                                onClick={handleSubmit}
+                                onClick={submitFreeTrialForm}
                                 disabled={loadingSending}
                                 className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-lg font-bold hover:shadow-lg transition-all duration-300"
                             >
                                 {loadingSending ? 'Inviando la tua prenotazione...' : 'Prenota Ora'}
                             </button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {showTeamForm && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-gradient-to-br from-purple-900 to-pink-900 rounded-2xl p-8 max-w-md w-full border border-purple-500/50 shadow-2xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-2xl font-bold text-white flex items-center space-x-2">
+                                <Users className="text-pink-400" size={28} />
+                                <span>Team Project</span>
+                            </h3>
+                            <button
+                                onClick={() => setShowTeamForm(false)}
+                                className="text-white hover:text-pink-400 transition-colors duration-200"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <p className="text-purple-200 mb-6 text-center">
+                            Registrati per unirti al <span className="text-pink-400 font-semibold">Roberto y Beatrice Project Team</span>
+                        </p>
+
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-white text-sm font-medium mb-2">
+                                        Nome *
+                                    </label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={20} />
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formTeamProject.name}
+                                            onChange={(e) => handleInputChange(e,setFormTeamProject)}
+                                            required
+                                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-purple-400/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition-all duration-200"
+                                            placeholder="Il tuo nome"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-white text-sm font-medium mb-2">
+                                        Cognome *
+                                    </label>
+                                    <div className="relative">
+                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={20} />
+                                        <input
+                                            type="text"
+                                            name="surname"
+                                            value={formTeamProject.surname}
+                                            onChange={(e) => handleInputChange(e,setFormTeamProject)}
+                                            required
+                                            className="w-full pl-10 pr-4 py-3 bg-white/10 border border-purple-400/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition-all duration-200"
+                                            placeholder="Il tuo cognome"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-white text-sm font-medium mb-2">
+                                    Telefono *
+                                </label>
+                                <div className="relative">
+                                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={20} />
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formTeamProject.phone}
+                                        onChange={(e) => handleInputChange(e,setFormTeamProject)}
+                                        required
+                                        className="w-full pl-10 pr-4 py-3 bg-white/10 border border-purple-400/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition-all duration-200"
+                                        placeholder="Il tuo numero di telefono"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-white text-sm font-medium mb-2">
+                                    Email *
+                                </label>
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-purple-400" size={20} />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formTeamProject.email}
+                                        onChange={(e) => handleInputChange(e,setFormTeamProject)}
+                                        required
+                                        className="w-full pl-10 pr-4 py-3 bg-white/10 border border-purple-400/50 rounded-lg text-white placeholder-purple-300 focus:outline-none focus:border-pink-400 focus:ring-1 focus:ring-pink-400 transition-all duration-200"
+                                        placeholder="La tua email"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                            <div className="flex gap-4 mt-8">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowTeamForm(false)}
+                                    className="flex-1 px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-200"
+                                >
+                                    Annulla
+                                </button>
+                                <button
+                                    type="submit"
+                                    onClick={submitTeamProjectForm}
+                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
+                                >
+                                    <Send size={20} />
+                                    <span>Registrati</span>
+                                </button>
+                            </div>
                     </div>
                 </div>
             )}
@@ -767,10 +1109,10 @@ const App: React.FC = () => {
                             Prenotazione Inviata!
                         </h3>
                         <p className="text-pink-400 font-bold text-lg mb-2">
-                            Grazie {formData.name}, la tua prova gratuita è prenotata!
+                            Grazie {formFreeTrial.name}, la tua prenotazione è stata inviata con successo.
                         </p>
                         <p className="text-gray-300 text-sm mb-4">
-                            Ti contatteremo al più presto per confermare il giorno e l'orario.
+                            Ti contatteremo al più presto.
                         </p>
                         <div className="bg-black/50 p-3 rounded-lg">
                             <p className="text-xs text-gray-400">Questo messaggio si chiuderà automaticamente...</p>
