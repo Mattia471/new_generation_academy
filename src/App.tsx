@@ -256,6 +256,17 @@ const App: React.FC = () => {
         window.scrollTo({top: 0, behavior: 'smooth'})
     }, [activeSection])
 
+    /*SCROLL SMOTH WHEN ARRIVE WITH ID*/
+    useEffect(() => {
+        if (window.location.hash) {
+            const id = window.location.hash.replace("#", "");
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: "smooth" });
+            }
+        }
+    }, []);
+
     return (
         <div
             className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-900 overflow-x-hidden pb-6">
