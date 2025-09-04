@@ -1100,11 +1100,12 @@ const App: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
+                                    disabled={loadingSending}
                                     onClick={submitTeamProjectForm}
                                     className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2"
                                 >
-                                    <Send size={20} />
-                                    <span>Registrati</span>
+
+                                    {loadingSending ? 'Inviando la tua registrazione...' : <div className={'flex flex-row'}><Send size={20} className={'mr-1'}/> Registrati</div>}
                                 </button>
                             </div>
                     </div>
