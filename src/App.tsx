@@ -796,8 +796,14 @@ const App: React.FC = () => {
                                                 <Phone className="text-pink-400" size={24}/>
                                                 <div className={"flex flex-col"}>
                                                     <h4 className="text-white font-semibold">Telefono</h4>
-                                                    <p className="text-pink-200">+39 380 68 68 333</p>
-                                                    <p className={"text-pink-200"}>+39 324 88 39 137</p>
+                                                    <a href="tel:+393806868333"
+                                                       className="text-pink-200 hover:underline">
+                                                        +39 380 68 68 333
+                                                    </a>
+                                                    <a href="tel:+393248839137"
+                                                       className="text-pink-200 hover:underline">
+                                                        +39 324 88 39 137
+                                                    </a>
                                                 </div>
                                             </div>
 
