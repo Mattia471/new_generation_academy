@@ -73,7 +73,7 @@ const App: React.FC = () => {
         {
             day: 'LUNEDÌ',
             classes: [
-                { time: '20:45', name: 'Bachata Musicality', level: 'Intermedio' },
+                { time: '20:45', name: 'Bachata Musicality', level: 'Open' },
                 { time: '21:45', name: 'Bachata Sensual Liv. 3', level: 'Avanzato' }
             ]
         },
@@ -414,6 +414,12 @@ const App: React.FC = () => {
                                 >
                                     Prenota la tua Prova Gratuita
                                 </button>
+                                <p className="text-purple-200 my-4 text-center text-sm">
+                                    Effettua l'iscrizione <span className="text-pink-400 font-semibold">entro il 30 settembre</span> e
+                                    riceverai il <span
+                                    className="text-pink-400 font-semibold">50% di sconto</span> sulla quota
+                                    d'iscrizione
+                                </p>
                             </div>
 
 
@@ -423,7 +429,7 @@ const App: React.FC = () => {
                                 {/* La Nostra Sede */}
                                 <div
                                     className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30">
-                                    <div className="flex items-center space-x-3 mb-6">
+                                <div className="flex items-center space-x-3 mb-6">
                                         <MapPin className="text-purple-400" size={32}/>
                                         <h3 className="text-2xl font-bold text-white">La Nostra Sede</h3>
                                     </div>
@@ -679,8 +685,11 @@ const App: React.FC = () => {
                                 <div
                                     className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/30">
                                     <h3 className="text-2xl font-bold text-white mb-4">Pronto a iniziare?</h3>
-                                    <p className="text-purple-200 mb-6">Prenota la tua lezione di prova gratuita e
-                                        scopri il ballo che fa per te!</p>
+                                    <p className="text-purple-200 my-4 text-center text-sm">
+                                        Effettua l'iscrizione <span className="text-pink-400 font-semibold">entro il 30 settembre</span> e
+                                        riceverai il <span
+                                        className="text-pink-400 font-semibold">50% di sconto</span> sulla quota d'iscrizione
+                                    </p>
                                     <button
                                         onClick={() => setShowBookingForm(true)}
                                         className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
@@ -931,13 +940,20 @@ const App: React.FC = () => {
                             </button>
                         </div>
 
+                        <p className="text-purple-200 my-4 text-center text-sm">
+                            Effettua l'iscrizione <span
+                            className="text-pink-400 font-semibold">entro il 30 settembre</span> e
+                            riceverai il <span
+                            className="text-pink-400 font-semibold">50% di sconto</span> sulla quota d'iscrizione
+                        </p>
+
                         <div className="space-y-4">
                             <input
                                 type="text"
                                 name="name"
                                 placeholder="Il tuo nome *"
                                 value={formFreeTrial.name}
-                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
+                                onChange={(e) => handleInputChange(e, setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
@@ -946,7 +962,7 @@ const App: React.FC = () => {
                                 name="surname"
                                 placeholder="Il tuo cognome *"
                                 value={formFreeTrial.surname}
-                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
+                                onChange={(e) => handleInputChange(e, setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
@@ -955,7 +971,7 @@ const App: React.FC = () => {
                                 name="email"
                                 placeholder="La tua email *"
                                 value={formFreeTrial.email}
-                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
+                                onChange={(e) => handleInputChange(e, setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
@@ -964,13 +980,13 @@ const App: React.FC = () => {
                                 name="phone"
                                 placeholder="Il tuo telefono *"
                                 value={formFreeTrial.phone}
-                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
+                                onChange={(e) => handleInputChange(e, setFormFreeTrial)}
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none"
                             />
                             <select
                                 name="day"
                                 value={formFreeTrial.day}
-                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
+                                onChange={(e) => handleInputChange(e, setFormFreeTrial)}
                                 required
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white focus:border-pink-500 focus:outline-none"
                             >
@@ -984,7 +1000,7 @@ const App: React.FC = () => {
                                 name="message"
                                 placeholder="Note aggiuntive (opzionale)"
                                 value={formFreeTrial.message}
-                                onChange={(e) => handleInputChange(e,setFormFreeTrial)}
+                                onChange={(e) => handleInputChange(e, setFormFreeTrial)}
                                 rows={3}
                                 className="w-full px-4 py-3 bg-black/30 border border-purple-500/30 rounded-lg text-white placeholder-purple-300 focus:border-pink-500 focus:outline-none resize-none"
                             />
@@ -1003,7 +1019,8 @@ const App: React.FC = () => {
 
             {showTeamForm && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-gradient-to-br from-purple-900 to-pink-900 rounded-2xl p-8 max-w-md w-full border border-purple-500/50 shadow-2xl">
+                    <div
+                        className="bg-gradient-to-br from-purple-900 to-pink-900 rounded-2xl p-8 max-w-md w-full border border-purple-500/50 shadow-2xl">
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-2xl font-bold text-white flex items-center space-x-2">
                                 <Users className="text-pink-400" size={28} />
